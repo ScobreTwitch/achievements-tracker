@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Main Progress Bar</title>
+  <style>
+    body {
+      background-color: #1e1e1e;
+      margin: 0;
+      padding: 20px;
+      font-family: sans-serif;
+      color: white;
+    }
+    #progress-only {
+      width: 50%;
+      margin: 0 auto;
+    }
+    .main-label {
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 24px;
+      background-color: #333;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background-color: #00c853;
+      transition: width 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <div id="progress-only">
+    <div class="main-label">Total Progress: <span id="main-percent">0%</span></div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="main-bar"></div>
+    </div>
+  </div>
+
+  <script>
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSn3NLTy4PlTC66NVTpTAYJGvLajb2LZtS0q0uZ4c2ongo-6vL672akiTfUHeFb8lwIhtZ5yqb5EU97/pub?gid=0&single=true&output=csv";
+
+    async function updateBar() {
+      try {
+        const res = await fetch(csvUrl + "&_=" + new Date().getTime()); // prevent caching
+        const csv = await res.text();
+        const rows = csv.trim().split("\n").slice(1);
+
+        let total = 0;
+        let current = 0;
+
+        rows.forEach(row => {
+          const [_, cur, tot] = row.split(",");
+          current += parseInt(cur);
+          total += parseInt(tot);
+        });
+
+        const percent = total > 0 ? Math.floor((current / total) * 100) : 0;
+        document.getElementById("main-bar").style.width = percent + "%";
+        document.getElementById("main-percent").textContent = percent + "%";
+
+      } catch (err) {
+        console.error("Failed to load progress:", err);
+      }
+    }
+
+    updateBar();
+    setInterval(updateBar, 3000); // refresh every 3 seconds
+  </script>
+</body>
+</html>

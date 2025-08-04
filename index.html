@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>OBS Achievement Tracker</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #1e1e1e;
+      color: white;
+      padding: 20px;
+    }
+    .progress-container {
+      margin-bottom: 40px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background-color: #333;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .progress-fill {
+      height: 100%;
+      background-color: #4caf50;
+      width: 0%;
+      transition: width 0.5s ease-in-out;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-container">
+    <h1>Overall Progress</h1>
+    <div class="progress-bar">
+      <div class="progress-fill" id="mainFill"></div>
+    </div>
+    <p id="percentText">Loading...</p>
+  </div>
+
+  <div class="achievements-container">
+    <h2>Achievements</h2>
+    <ul id="achievementList"></ul>
+  </div>
+
+  <script>
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSn3NLTy4PlTC66NVTpTAYJGvLajb2LZtS0q0uZ4c2ongo-6vL672akiTfUHeFb8lwIhtZ5yqb5EU97/pub?gid=0&single=true&output=csv";
+
+    function updateData() {
+      fetch(csvUrl)
+        .then(res => res.text())
+        .then(csv => {
+          const rows = csv.trim().split("\n").slice(1); // skip header
+          let totalCurrent = 0;
+          let totalRequired = 0;
+
+          const list = document.getElementById("achievementList");
+          list.innerHTML = "";
+
+          rows.forEach(row => {
+            const [title, current, total] = row.split(",");
+            const cur = parseInt(current);
+            const tot = parseInt(total);
+
+            totalCurrent += cur;
+            totalRequired += tot;
+
+            const li = document.createElement("li");
+            li.textContent = `${title}: ${cur}/${tot}`;
+            list.appendChild(li);
+          });
+
+          const percent = totalRequired > 0 ? (totalCurrent / totalRequired) * 100 : 0;
+          document.getElementById("mainFill").style.width = percent + "%";
+          document.getElementById("percentText").textContent = `${Math.round(percent)}% complete`;
+        });
+    }
+
+    updateData();
+    setInterval(updateData, 10000); // refresh every 10 seconds
+  </script>
+</body>
+</html>

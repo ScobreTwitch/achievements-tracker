@@ -1,0 +1,54 @@
+{
+  "achievements": [
+    {
+      "title": "Koroks",
+      "current": 152,
+      "total": 900
+    },
+    {
+      "title": "Main Scenario",
+      "current": 9,
+      "total": 20
+    },
+    {
+      "title": "Side Quests",
+      "current": 40,
+      "total": 76
+    },
+    {
+      "title": "Shrine Quests",
+      "current": 9,
+      "total": 42
+    },
+    {
+      "title": "Shrines",
+      "current": 42,
+      "total": 136
+    },
+    {
+      "title": "Memories",
+      "current": 5,
+      "total": 18
+    },
+    {
+      "title": "Lynels",
+      "current": 2,
+      "total": 22
+    },
+    {
+      "title": "Taluses",
+      "current": 5,
+      "total": 40
+    },
+    {
+      "title": "Hinoxes",
+      "current": 5,
+      "total": 40
+    },
+    {
+      "title": "Moldugas",
+      "current": 2,
+      "total": 4
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Achievements List</title>
+  <style>
+    body {
+      background-color: #1e1e1e;
+      color: white;
+      font-family: sans-serif;
+      padding: 20px;
+      margin: 0;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    li {
+      margin: 4px 0;
+    }
+    .achievement-bar {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 1.2;
+      color: black;
+      white-space: nowrap;
+      background-color: grey;
+    }
+  </style>
+</head>
+<body>
+  <ul id="achievementList"></ul>
+
+  <script>
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSn3NLTy4PlTC66NVTpTAYJGvLajb2LZtS0q0uZ4c2ongo-6vL672akiTfUHeFb8lwIhtZ5yqb5EU97/pub?gid=0&single=true&output=csv";
+
+    function getGreenGradient(percent) {
+      const hue = Math.min(120, Math.max(0, percent * 1.2)); // 0% = red, 100% = green
+      return `hsl(${hue}, 70%, 50%)`;
+    }
+
+    function updateAchievements() {
+      fetch(csvUrl + "&_=" + new Date().getTime())  // prevent caching
+        .then(res => res.text())
+        .then(csv => {
+          const rows = csv.trim().split("\n").slice(1); // skip header
+          const list = document.getElementById("achievementList");
+          list.innerHTML = "";
+
+          rows.forEach(row => {
+            const [title, current, total] = row.split(",");
+            const cur = parseInt(current);
+            const tot = parseInt(total);
+            const percent = tot > 0 ? cur / tot : 0;
+
+            const li = document.createElement("li");
+            const span = document.createElement("span");
+            span.className = "achievement-bar";
+            span.textContent = `${title}: ${cur}/${tot}`;
+            span.style.backgroundColor = getGreenGradient(percent * 100);
+
+            li.appendChild(span);
+            list.appendChild(li);
+          });
+        });
+    }
+
+    updateAchievements();
+    setInterval(updateAchievements, 3000); // update every 3 seconds
+  </script>
+</body>
+</html>
